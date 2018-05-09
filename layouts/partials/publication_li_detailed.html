@@ -6,21 +6,28 @@
     {{ .Scratch.Set "image" .Params.header.image }}
   {{ end }}
   {{ if .Scratch.Get "image" }}
-  <div>
-    <a href="{{ .Permalink }}">
-      {{ $img_src := urls.Parse (.Scratch.Get "image") }}
-      {{ if $img_src.Scheme }}
-        <img src="{{ .Scratch.Get "image" }}" class="article-banner" itemprop="image">
-      {{ else }}
-        <img src="{{ "/img/" | relURL }}{{ .Scratch.Get "image" }}" class="article-banner" itemprop="image">
-      {{ end }}
-    </a>
-  </div>
+    <div class="row" style="display: flex; flex-wrap:wrap;align-items:center">
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4" >
+          <a href="{{ .Permalink }}">
+            {{ $img_src := urls.Parse (.Scratch.Get "image") }}
+            {{ if $img_src.Scheme }}
+              <img src="{{ .Scratch.Get "image" }}" class="article-banner" itemprop="image">
+            {{ else }}
+              <img src="{{ "/img/" | relURL }}{{ .Scratch.Get "image" }}" class="article-banner" itemprop="image">
+            {{ end }}
+          </a>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+            <h3 class="article-title" itemprop="name">
+              <a href="{{ .Permalink }}" itemprop="url">{{ .Title }}</a>
+            </h3>
+        </div>
+    </div>
+  {{ else }}
+    <h3 class="article-title" itemprop="name">
+      <a href="{{ .Permalink }}" itemprop="url">{{ .Title }}</a>
+    </h3>
   {{ end }}
-
-  <h3 class="article-title" itemprop="name">
-    <a href="{{ .Permalink }}" itemprop="url">{{ .Title }}</a>
-  </h3>
 
   <div class="pub-abstract" itemprop="text">
     {{ if .Params.abstract_short }}
@@ -48,5 +55,4 @@
   <div class="pub-links">
     {{ partial "publication_links" (dict "content" . "is_list" 1) }}
   </div>
-
 </div>
