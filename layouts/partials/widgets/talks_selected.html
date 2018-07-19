@@ -2,20 +2,50 @@
 {{ $page := .page }}
 
 <!-- Selected Talks widget -->
-<div class="row">
-  <div class="col-xs-12 col-md-4 section-heading">
-    <h1>{{ with $page.Title }}{{ . | markdownify }}{{ end }}</h1>
-    {{ with $page.Params.subtitle }}<p>{{ . | markdownify }}</p>{{ end }}
-  </div>
-  <div class="col-xs-12 col-md-8">
-    {{ with $page.Content }}<p>{{ . | markdownify }}</p>{{ end }}
+<!-- Check if new talks pending -->
+{{$myVar := newScratch}}
+{{$myVar.Add "show" 0}}
+{{ range (where (where $.Site.RegularPages "Type" "talk") ".Params.selected" true)}}
+    {{ if or (ne (time .Params.time_start).Year now.Year) (and (eq (time .Params.time_start).Year now.Year) (ge (time .Params.time_start).YearDay now.YearDay))}}
+        {{$myVar.Set "show" 1}}
+    {{end}}
+{{end}}
 
-    {{ range (sort (where (where $.Site.RegularPages "Type" "talk") ".Params.selected" true) ".Params.time_start" "desc") }}
-      {{ if eq $page.Params.list_format 1 }}
-        {{ partial "talk_li_detailed" . }}
-      {{ else }}
-        {{ partial "talk_li_simple" . }}
-      {{ end }}
-    {{ end }}
-  </div>
-</div>
+{{if eq ($myVar.Get "show") 1}}
+    <div class="row">
+      <div class="col-xs-12 col-md-4 section-heading">
+        <h1>{{ with $page.Title }}{{ . | markdownify }}{{ end }}</h1>
+        {{ with $page.Params.subtitle }}<p>{{ . | markdownify }}</p>{{ end }}
+      </div>
+      <div class="col-xs-12 col-md-8">
+        {{ with $page.Content }}<p>{{ . | markdownify }}</p>{{ end }}
+    
+        {{ range (sort (where (where $.Site.RegularPages "Type" "talk") ".Params.selected" true) ".Params.time_start" "desc") }}
+            {{ if or (ne (time .Params.time_start).Year now.Year) (and (eq (time .Params.time_start).Year now.Year) (ge (time .Params.time_start).YearDay now.YearDay))}}
+                {{ if eq $page.Params.list_format 1 }}
+                  {{ partial "talk_li_detailed" . }}
+                {{ else }}
+                  {{ partial "talk_li_simple" . }}
+                {{ end }}
+            {{ end }}
+        {{end}}
+      </div>
+    </div>
+{{else}}
+    <div class="row">
+      <div class="col-xs-12 col-md-4 section-heading">
+        <h1>Talks</h1>
+        <p>See the list of my talks {{"[here](./talk/)"| markdownify }}.</p>
+      </div>
+      <div class="col-xs-12 col-md-8">
+        {{ with $page.Content }}<p>{{ . | markdownify }}</p>{{ end }}
+        {{ range (first 1 (sort (where (where $.Site.RegularPages "Type" "talk") ".Params.selected" true) ".Params.time_start" "desc")) }}
+             {{ if eq $page.Params.list_format 1 }}
+               {{ partial "talk_li_detailed" . }}
+             {{ else }}
+               {{ partial "talk_li_simple" . }}
+             {{ end }}
+        {{end}}
+      </div>
+    </div>
+{{end}}
