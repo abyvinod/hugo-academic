@@ -766,7 +766,7 @@ article .article-metadata {
 #container-publications {
   display: block;
   position: relative;
-  overflow: hidden;
+  overflow: inherit;
 }
 
 /*************************************************
