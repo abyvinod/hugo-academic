@@ -19,7 +19,7 @@
         </div>
         <div class="col-md-10">
 
-          {{ range sort .Pages ".Params.time_start"}}
+          {{ range sort .Pages ".Params.time_start" "desc"}}
             {{ if eq $.Params.list_format 1 }}
               {{ partial "talk_li_detailed" . }}
             {{ else }}
